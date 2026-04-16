@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto — Comercial Buen Fe</title>
+  <meta name="description" content="Contáctanos para pedidos, cotizaciones o cualquier consulta. Estamos listos para atenderte.">
+  <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="cabecera">
+    <div class="cabecera-inner">
+      <a href="index.html" class="logo-area">
+        <img src="Imágenes/LOGO.jpg" alt="Comercial Buen Fe" class="logo-img">
+        <div class="logo-texto">
+          <span class="logo-nombre">Comercial Buen Fe</span>
+          <span class="logo-subtitulo">Frutos &amp; Granos Selectos</span>
+        </div>
+      </a>
+      <nav id="nav-menu" class="nav-menu">
+        <a href="index.html">Inicio</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+      <div class="cabecera-acciones">
+        <a href="carrito.html" class="btn-carrito">
+          🛒 <span>Carrito</span>
+          <span class="carrito-badge">0</span>
+        </a>
+        <button id="menu-toggle" class="menu-toggle">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO PÁGINA -->
+  <section class="page-hero">
+    <div class="hero-etiqueta" style="margin-bottom:20px">📞 Estamos para ti</div>
+    <h1>Contáctanos</h1>
+    <p>¿Tienes preguntas, quieres hacer un pedido o necesitas una cotización? Escríbenos y te respondemos a la brevedad.</p>
+  </section>
+
+  <!-- CONTACTO -->
+  <main class="contacto-layout">
+
+    <!-- Info de contacto -->
+    <div class="contacto-info">
+      <span class="seccion-etiqueta">Información</span>
+      <h2>Hablemos</h2>
+      <p>
+        Ya seas un cliente particular o un negocio buscando proveedor, estamos listos para
+        asesorarte y ofrecerte la mejor propuesta. Contáctanos por el medio que prefieras.
+      </p>
+
+      <div class="contacto-dato">
+        <div class="contacto-dato-icono">📞</div>
+        <div>
+          <div class="contacto-dato-titulo">Teléfono</div>
+          <div class="contacto-dato-valor">+593 00 000 0000</div>
+        </div>
+      </div>
+
+      <div class="contacto-dato">
+        <div class="contacto-dato-icono">💬</div>
+        <div>
+          <div class="contacto-dato-titulo">WhatsApp</div>
+          <div class="contacto-dato-valor">+593 00 000 0000</div>
+        </div>
+      </div>
+
+      <div class="contacto-dato">
+        <div class="contacto-dato-icono">✉️</div>
+        <div>
+          <div class="contacto-dato-titulo">Correo electrónico</div>
+          <div class="contacto-dato-valor">info@comercialbuenfe.com</div>
+        </div>
+      </div>
+
+      <div class="contacto-dato">
+        <div class="contacto-dato-icono">📍</div>
+        <div>
+          <div class="contacto-dato-titulo">Ubicación</div>
+          <div class="contacto-dato-valor">Ecuador</div>
+        </div>
+      </div>
+
+      <div class="contacto-dato">
+        <div class="contacto-dato-icono">🕐</div>
+        <div>
+          <div class="contacto-dato-titulo">Horario de atención</div>
+          <div class="contacto-dato-valor">Lun – Vie: 8:00 am – 6:00 pm</div>
+          <div class="contacto-dato-valor" style="font-size:13px;color:var(--texto-suave)">Sáb: 8:00 am – 1:00 pm</div>
+        </div>
+      </div>
+
+      <!-- Mapa placeholder -->
+      <div style="margin-top:28px;background:var(--fondo-claro);border-radius:var(--radio);height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;box-shadow:var(--sombra-suave)">
+        <span style="font-size:40px">📍</span>
+        <span style="font-size:13px;color:var(--texto-suave)">Mapa próximamente disponible</span>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="contacto-form">
+      <h3>Envíanos un mensaje</h3>
+      <form id="contacto-form" novalidate>
+
+        <div class="form-row">
+          <div class="form-grupo">
+            <label for="nombre">Nombre *</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" required>
+          </div>
+          <div class="form-grupo">
+            <label for="email">Correo electrónico *</label>
+            <input type="email" id="email" name="email" placeholder="tu@correo.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-grupo">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="+593 00 000 0000">
+          </div>
+          <div class="form-grupo">
+            <label for="tipo">Tipo de consulta *</label>
+            <select id="tipo" name="tipo" required>
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="pedido">Hacer un pedido</option>
+              <option value="cotizacion">Solicitar cotización</option>
+              <option value="mayorista">Precios al por mayor</option>
+              <option value="informacion">Información de productos</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grupo">
+          <label for="asunto">Asunto *</label>
+          <input type="text" id="asunto" name="asunto" placeholder="¿En qué podemos ayudarte?" required>
+        </div>
+
+        <div class="form-grupo">
+          <label for="mensaje">Mensaje *</label>
+          <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos con detalle tu consulta o pedido. Si necesitas una cotización, indícanos los productos y las cantidades aproximadas." required></textarea>
+        </div>
+
+        <div class="form-grupo" style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="acepto" name="acepto" required style="width:auto;accent-color:var(--verde-brillante)">
+          <label for="acepto" style="margin:0;font-weight:400;font-size:13px;color:var(--texto-suave)">
+            Acepto que mis datos sean utilizados para responder a mi consulta.
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-verde btn-lg" style="width:100%;justify-content:center;margin-top:8px">
+          Enviar mensaje ✉️
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- BANNER CTA -->
+  <section class="banner-cta">
+    <h2>¿Prefieres ver nuestros productos primero?</h2>
+    <p>Explora nuestro catálogo completo de frutos secos, granos y semillas selectas.</p>
+    <a href="catalogo.html" class="btn btn-dorado btn-lg">Ver Catálogo →</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="pie-pagina">
+    <div class="pie-superior">
+      <div class="pie-marca">
+        <div class="logo-nombre-footer">Comercial Buen Fe</div>
+        <p>De la tierra a tu mesa, con calidad y confianza. Más de 30 años distribuyendo los mejores frutos secos y granos selectos.</p>
+        <div class="pie-redes">
+          <div class="pie-red">📘</div>
+          <div class="pie-red">📸</div>
+          <div class="pie-red">💬</div>
+        </div>
+      </div>
+      <div class="pie-columna">
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="pie-columna">
+        <h4>Categorías</h4>
+        <ul>
+          <li><a href="catalogo.html?cat=frutos-secos">Frutos Secos</a></li>
+          <li><a href="catalogo.html?cat=granos">Granos</a></li>
+          <li><a href="catalogo.html?cat=semillas">Semillas</a></li>
+          <li><a href="catalogo.html?cat=deshidratados">Deshidratados</a></li>
+        </ul>
+      </div>
+      <div class="pie-columna">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="tel:+593000000000">📞 +593 00 000 0000</a></li>
+          <li><a href="mailto:info@comercialbuenfe.com">✉️ info@comercialbuenfe.com</a></li>
+          <li><a href="contacto.html">📍 Ecuador</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-inferior">
+      <span>© 2026 Comercial Buen Fe. Todos los derechos reservados.</span>
+      <span>Hecho con ❤️ en Ecuador</span>
+    </div>
+  </footer>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="JS/productos.js"></script>
+  <script src="JS/main.js"></script>
+</body>
+</html>

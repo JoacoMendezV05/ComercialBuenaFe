@@ -1,88 +1,213 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comercial Buena Fe | Granos y Frutos Secos</title>
-    <link rel="stylesheet" href="CSS/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comercial Buen Fe | Frutos Secos y Granos Selectos</title>
+  <meta name="description" content="Tu proveedor de confianza en frutos secos, granos y semillas de primera calidad. Más de 30 años llevando lo mejor de la tierra a tu mesa.">
+  <link rel="stylesheet" href="CSS/styles.css">
 </head>
 <body>
 
-    <header class="cabecera">
-        <div class="logo-contenedor">
-            <h1 class="logo-texto">Comercial <span class="resalte-verde">Buena Fe</span></h1>
+  <!-- HEADER -->
+  <header class="cabecera">
+    <div class="cabecera-inner">
+      <a href="index.html" class="logo-area">
+        <img src="Imágenes/LOGO.jpg" alt="Comercial Buen Fe" class="logo-img">
+        <div class="logo-texto">
+          <span class="logo-nombre">Comercial Buen Fe</span>
+          <span class="logo-subtitulo">Frutos &amp; Granos Selectos</span>
         </div>
-        <nav class="navegacion">
-            <ul>
-                <li><a href="#" class="activo">Inicio</a></li>
-                <li><a href="#">Catálogo</a></li>
-                <li><a href="#">Nosotros</a></li>
-                <li><a href="#">Contacto</a></li>
-            </ul>
-        </nav>
-    </header>
+      </a>
+      <nav id="nav-menu" class="nav-menu">
+        <a href="index.html">Inicio</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+      <div class="cabecera-acciones">
+        <a href="carrito.html" class="btn-carrito">
+          🛒 <span>Carrito</span>
+          <span class="carrito-badge">0</span>
+        </a>
+        <button id="menu-toggle" class="menu-toggle">☰</button>
+      </div>
+    </div>
+  </header>
 
-    <main class="hero">
-        <div class="hero-texto">
-            <h2>De la tierra a tu mesa, con <span class="resalte-verde">calidad y confianza.</span></h2>
-            <p>Descubre nuestra selección premium de granos andinos, frutos secos y cereales al por mayor y menor.</p>
-            <a href="#productos" class="btn-principal">Ver Catálogo</a>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-texto">
+        <div class="hero-etiqueta">🌿 Calidad desde el origen</div>
+        <h1 class="hero-titulo">
+          De la tierra a tu mesa,<br>con <span>calidad</span><br>y confianza.
+        </h1>
+        <p class="hero-descripcion">
+          Descubre nuestra selección premium de frutos secos, granos andinos y semillas naturales.
+          Más de 30 años distribuyendo lo mejor de la naturaleza.
+        </p>
+        <div class="hero-botones">
+          <a href="catalogo.html" class="btn btn-verde btn-lg">Ver Catálogo →</a>
+          <a href="nosotros.html" class="btn btn-dorado">Nuestra Historia</a>
         </div>
-        <div class="hero-imagen">
-            <div class="imagen-placeholder">Imagen de Granos/Frutos Secos</div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-numero">30+</div>
+            <div class="hero-stat-label">Años de experiencia</div>
+          </div>
+          <div>
+            <div class="hero-stat-numero">18+</div>
+            <div class="hero-stat-label">Productos selectos</div>
+          </div>
+          <div>
+            <div class="hero-stat-numero">100%</div>
+            <div class="hero-stat-label">Natural y puro</div>
+          </div>
         </div>
-    </main>
+      </div>
+      <div class="hero-imagen-area">
+        <div class="hero-blob">
+          <span class="hero-icon">🌰</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section class="beneficios">
-        <div class="beneficio-item">
-            <h3>100% Naturales</h3>
-            <p>Seleccionados cuidadosamente desde su origen.</p>
-        </div>
-        <div class="beneficio-item">
-            <h3>Peso Exacto</h3>
-            <p>Garantía de calidad y honestidad en cada compra.</p>
-        </div>
-        <div class="beneficio-item">
-            <h3>Envíos Rápidos</h3>
-            <p>Entregas seguras a tu domicilio o negocio.</p>
-        </div>
-    </section>
+  <!-- BENEFICIOS -->
+  <section class="beneficios seccion">
+    <div class="seccion-titulo">
+      <span class="seccion-etiqueta">¿Por qué elegirnos?</span>
+      <h2>Compromiso con la calidad</h2>
+      <div class="divisor"></div>
+    </div>
+    <div class="beneficios-grid">
+      <div class="beneficio-item">
+        <div class="beneficio-icono">🌿</div>
+        <h3>100% Naturales</h3>
+        <p>Productos seleccionados en origen, sin conservantes ni aditivos artificiales.</p>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icono">⚖️</div>
+        <h3>Peso Exacto</h3>
+        <p>Garantía de honestidad y precisión en cada presentación que ofrecemos.</p>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icono">🚚</div>
+        <h3>Envíos Rápidos</h3>
+        <p>Entregas seguras y puntuales a tu domicilio o negocio en toda la región.</p>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icono">🤝</div>
+        <h3>30 Años de Confianza</h3>
+        <p>Tres décadas construyendo relaciones sólidas con nuestros clientes y proveedores.</p>
+      </div>
+    </div>
+  </section>
 
-    <section id="productos" class="destacados">
-        <h2 class="titulo-seccion">Nuestros Productos Estrella</h2>
-        <div class="grid-productos">
-            <article class="tarjeta-producto">
-                <div class="img-producto">Foto Nuez</div>
-                <h3>Nueces Peladas</h3>
-                <p class="precio">$8.50 <span class="peso">/ 500g</span></p>
-                <button class="btn-secundario">Añadir al carrito</button>
-            </article>
-            
-            <article class="tarjeta-producto">
-                <div class="img-producto">Foto Almendra</div>
-                <h3>Almendras Tostadas</h3>
-                <p class="precio">$6.00 <span class="peso">/ 500g</span></p>
-                <button class="btn-secundario">Añadir al carrito</button>
-            </article>
+  <!-- CATEGORÍAS -->
+  <section class="seccion">
+    <div class="seccion-titulo">
+      <span class="seccion-etiqueta">Nuestras categorías</span>
+      <h2>Encuentra lo que buscas</h2>
+      <p>Explora nuestra amplia variedad de productos naturales de primera calidad.</p>
+    </div>
+    <div class="categorias-grid contenedor">
+      <a href="catalogo.html?cat=frutos-secos" class="categoria-card">
+        <div class="categoria-icono">🌰</div>
+        <div class="categoria-nombre">Frutos Secos</div>
+        <div class="categoria-cantidad">6 productos</div>
+      </a>
+      <a href="catalogo.html?cat=granos" class="categoria-card">
+        <div class="categoria-icono">🌾</div>
+        <div class="categoria-nombre">Granos</div>
+        <div class="categoria-cantidad">6 productos</div>
+      </a>
+      <a href="catalogo.html?cat=semillas" class="categoria-card">
+        <div class="categoria-icono">🌱</div>
+        <div class="categoria-nombre">Semillas</div>
+        <div class="categoria-cantidad">3 productos</div>
+      </a>
+      <a href="catalogo.html?cat=deshidratados" class="categoria-card">
+        <div class="categoria-icono">🍇</div>
+        <div class="categoria-nombre">Deshidratados</div>
+        <div class="categoria-cantidad">3 productos</div>
+      </a>
+    </div>
+  </section>
 
-            <article class="tarjeta-producto">
-                <div class="img-producto">Foto Quinua</div>
-                <h3>Quinua Perlada</h3>
-                <p class="precio">$3.50 <span class="peso">/ 1kg</span></p>
-                <button class="btn-secundario">Añadir al carrito</button>
-            </article>
-        </div>
-    </section>
+  <!-- PRODUCTOS DESTACADOS -->
+  <section class="seccion bg-claro">
+    <div class="seccion-titulo">
+      <span class="seccion-etiqueta">Los más pedidos</span>
+      <h2>Productos Estrella</h2>
+      <p>Los favoritos de nuestros clientes, seleccionados por su calidad y sabor excepcionales.</p>
+      <div class="divisor"></div>
+    </div>
+    <div id="productos-destacados" class="productos-grid contenedor">
+      <!-- Generado por JS -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px"><div class="spinner" style="border:3px solid #eee;border-top-color:var(--verde-brillante);border-radius:50%;width:36px;height:36px;animation:spin 0.8s linear infinite;margin:0 auto"></div></div>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="catalogo.html" class="btn btn-marron">Ver todos los productos →</a>
+    </div>
+  </section>
 
-    <footer class="pie-pagina">
-        <div class="footer-info">
-            <h3>Comercial Buena Fe</h3>
-            <p>Tu proveedor de confianza en granos y frutos secos.</p>
-        </div>
-        <div class="footer-enlaces">
-            <p>© 2026 Comercial Buena Fe. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+  <!-- BANNER CTA -->
+  <section class="banner-cta">
+    <h2>¿Buscas precios al por mayor?</h2>
+    <p>Contáctanos y te asesoramos con la mejor propuesta para tu negocio o familia.</p>
+    <a href="contacto.html" class="btn btn-dorado btn-lg">Hablar con un asesor</a>
+  </section>
 
+  <!-- FOOTER -->
+  <footer class="pie-pagina">
+    <div class="pie-superior">
+      <div class="pie-marca">
+        <div class="logo-nombre-footer">Comercial Buen Fe</div>
+        <p>De la tierra a tu mesa, con calidad y confianza. Más de 30 años distribuyendo los mejores frutos secos y granos selectos.</p>
+        <div class="pie-redes">
+          <div class="pie-red" title="Facebook">📘</div>
+          <div class="pie-red" title="Instagram">📸</div>
+          <div class="pie-red" title="WhatsApp">💬</div>
+        </div>
+      </div>
+      <div class="pie-columna">
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="pie-columna">
+        <h4>Categorías</h4>
+        <ul>
+          <li><a href="catalogo.html?cat=frutos-secos">Frutos Secos</a></li>
+          <li><a href="catalogo.html?cat=granos">Granos</a></li>
+          <li><a href="catalogo.html?cat=semillas">Semillas</a></li>
+          <li><a href="catalogo.html?cat=deshidratados">Deshidratados</a></li>
+        </ul>
+      </div>
+      <div class="pie-columna">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="tel:+593000000000">📞 +593 00 000 0000</a></li>
+          <li><a href="mailto:info@comercialbuenfe.com">✉️ info@comercialbuenfe.com</a></li>
+          <li><a href="contacto.html">📍 Ecuador</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-inferior">
+      <span>© 2026 Comercial Buen Fe. Todos los derechos reservados.</span>
+      <span>Hecho con ❤️ en Ecuador</span>
+    </div>
+  </footer>
+
+  <div id="toast-container" class="toast-container"></div>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  <script src="JS/productos.js"></script>
+  <script src="JS/main.js"></script>
 </body>
 </html>

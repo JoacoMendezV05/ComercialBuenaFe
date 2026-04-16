@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Producto — Comercial Buen Fe</title>
+  <title>Catálogo de Productos — Comercial Buen Fe</title>
+  <meta name="description" content="Explora nuestro catálogo completo de frutos secos, granos, semillas y deshidratados de primera calidad.">
   <link rel="stylesheet" href="CSS/styles.css">
 </head>
 <body>
@@ -34,23 +35,40 @@
     </div>
   </header>
 
-  <!-- DETALLE (generado por JS) -->
-  <main class="detalle-wrap">
-    <div id="detalle-contenido">
-      <div style="text-align:center;padding:80px 0">
-        <div style="font-size:60px;margin-bottom:16px">🌰</div>
-        <p style="color:var(--texto-suave)">Cargando producto…</p>
+  <!-- CATÁLOGO -->
+  <main class="catalogo-layout">
+    <div class="catalogo-header">
+      <h1>🛒 Nuestro Catálogo</h1>
+      <div class="catalogo-controles">
+        <input type="search" id="busqueda" class="busqueda-input" placeholder="🔍 Buscar producto…">
+        <select id="orden" class="filtro-select">
+          <option value="defecto">Orden por defecto</option>
+          <option value="precio-asc">Precio: menor a mayor</option>
+          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="nombre">Nombre A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Filtros de categoría -->
+    <div class="categorias-filtro">
+      <button class="filtro-btn activo" data-cat="todos">🛒 Todos</button>
+      <button class="filtro-btn" data-cat="frutos-secos">🌰 Frutos Secos</button>
+      <button class="filtro-btn" data-cat="granos">🌾 Granos</button>
+      <button class="filtro-btn" data-cat="semillas">🌱 Semillas</button>
+      <button class="filtro-btn" data-cat="deshidratados">🍇 Deshidratados</button>
+    </div>
+
+    <p id="resultado-info" class="resultado-info"></p>
+
+    <!-- Grid de productos (generado por JS) -->
+    <div id="productos-grid" class="productos-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px">
+        <div style="font-size:36px;margin-bottom:12px">🌰</div>
+        <p style="color:var(--texto-suave)">Cargando productos…</p>
       </div>
     </div>
   </main>
-
-  <!-- PRODUCTOS RELACIONADOS -->
-  <section style="background:var(--fondo-claro);padding-top:52px">
-    <div style="max-width:1100px;margin:0 auto;padding:0 32px 60px">
-      <h2 style="font-size:26px;color:var(--marron-oscuro);margin-bottom:24px">Productos relacionados</h2>
-      <div id="relacionados-grid" class="productos-grid"></div>
-    </div>
-  </section>
 
   <!-- FOOTER -->
   <footer class="pie-pagina">
