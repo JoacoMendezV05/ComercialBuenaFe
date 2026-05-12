@@ -13,9 +13,11 @@ USE comercial_buen_fe;
 --  TABLA: categorias
 -- ============================================================
 CREATE TABLE IF NOT EXISTS categorias (
-  id        VARCHAR(30)  NOT NULL,
-  nombre    VARCHAR(80)  NOT NULL,
-  icono     VARCHAR(10)  NOT NULL,
+  id          VARCHAR(30)   NOT NULL,
+  nombre      VARCHAR(80)   NOT NULL,
+  icono       VARCHAR(10)   NOT NULL DEFAULT '📦',
+  descripcion TEXT          NULL,
+  activo      TINYINT(1)    NOT NULL DEFAULT 1,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -96,11 +98,11 @@ CREATE TABLE IF NOT EXISTS pedido_items (
 -- ============================================================
 --  SEED: categorias
 -- ============================================================
-INSERT INTO categorias (id, nombre, icono) VALUES
-  ('frutos-secos',  'Frutos Secos',  '🌰'),
-  ('granos',        'Granos',        '🌾'),
-  ('semillas',      'Semillas',      '🌱'),
-  ('deshidratados', 'Deshidratados', '🍇');
+INSERT INTO categorias (id, nombre, icono, descripcion, activo) VALUES
+  ('frutos-secos',  'Frutos Secos',  '🌰', 'Nueces, almendras, maní y más frutos secos selectos.',      1),
+  ('granos',        'Granos',        '🌾', 'Quinua, lentejas, garbanzos y granos andinos.',              1),
+  ('semillas',      'Semillas',      '🌱', 'Chía, sésamo, girasol y otras semillas nutritivas.',         1),
+  ('deshidratados', 'Deshidratados', '🍇', 'Pasas, orejones, coco rallado y frutas deshidratadas.',      1);
 
 
 -- ============================================================
@@ -210,4 +212,13 @@ CREATE OR REPLACE VIEW vista_productos AS
     p.creado_en
   FROM productos p
   INNER JOIN categorias c ON c.id = p.categoria_id
-  WHERE p.activo = 1;
+  WHERE p.activo = 1 AND COALESCE(c.activo, 1) = 1;
+
+
+-- ============================================================
+--  MIGRACIÓN: columnas nuevas en categorias
+--  (seguro re-ejecutar; ADD COLUMN IF NOT EXISTS requiere MySQL 8+)
+-- ============================================================
+ALTER TABLE categorias
+  ADD COLUMN IF NOT EXISTS descripcion TEXT          NULL         AFTER icono,
+  ADD COLUMN IF NOT EXISTS activo      TINYINT(1)    NOT NULL DEFAULT 1 AFTER descripcion;

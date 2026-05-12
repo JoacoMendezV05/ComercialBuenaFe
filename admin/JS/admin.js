@@ -39,7 +39,36 @@ const AUTH = {
 };
 
 /* ============================================
-   DATOS POR DEFECTO (seed inicial)
+   BACKEND API
+   ============================================ */
+const API_ADMIN  = 'http://localhost:3000/api/admin';
+const API_HEALTH = 'http://localhost:3000/api/health';
+let _modoAPI = false;
+
+async function checkAPI() {
+  try {
+    const res = await fetch(API_HEALTH, { signal: AbortSignal.timeout(2500) });
+    _modoAPI = res.ok;
+  } catch {
+    _modoAPI = false;
+  }
+  return _modoAPI;
+}
+
+async function apiFetch(ruta, opts = {}) {
+  const res = await fetch(`${API_ADMIN}${ruta}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+/* ============================================
+   DATOS POR DEFECTO (seed inicial localStorage)
    ============================================ */
 const DEFAULT_CATEGORIAS = [
   { id: 'frutos-secos',  nombre: 'Frutos Secos',  icono: '🌰', descripcion: 'Nueces, almendras, maní y más frutos secos selectos.', activo: true },
@@ -57,79 +86,141 @@ const DEFAULT_PRODUCTOS = [
   { id:6,  nombre:'Anacardos (Cashews)',   categoria:'frutos-secos', precio:10.00, unidad:'lb', icono:'🥜', badge:null,      activo:true, descripcion:'Anacardos enteros de primera calidad, cremosos y nutritivos. Perfectos para cocinar o comer solos.', atributos:['Enteros seleccionados','Cremosos','Sin cáscara','Versátiles'] },
   { id:7,  nombre:'Quinua Perlada',        categoria:'granos',       precio:5.00,  unidad:'lb', icono:'🌾', badge:'popular', activo:true, descripcion:'Quinua blanca premium de origen andino, libre de gluten y rica en proteínas completas.', atributos:['Sin gluten','Proteína completa','Origen andino','Orgánica certificada'] },
   { id:8,  nombre:'Arroz Integral',        categoria:'granos',       precio:2.50,  unidad:'lb', icono:'🍚', badge:null,      activo:true, descripcion:'Arroz integral de grano largo, con su salvado intacto. Rico en fibra y vitaminas B.', atributos:['Grano largo','Alto en fibra','Con salvado','Mínimo procesado'] },
-  { id:9,  nombre:'Lentejas Verdes',       categoria:'granos',       precio:2.00,  unidad:'lb', icono:'🫘', badge:null,      activo:true, descripcion:'Lentejas verdes seleccionadas, ideales para sopas, ensaladas y guisos. Gran fuente de proteína vegetal.', atributos:['Alto en hierro','Proteína vegetal','Rápida cocción','Sin OGM'] },
+  { id:9,  nombre:'Lentejas Verdes',       categoria:'granos',       precio:2.00,  unidad:'lb', icono:'🫘', badge:null,      activo:true, descripcion:'Lentejas verdes seleccionadas, ideales para sopas y guisos. Gran fuente de proteína vegetal.', atributos:['Alto en hierro','Proteína vegetal','Rápida cocción','Sin OGM'] },
   { id:10, nombre:'Garbanzos',             categoria:'granos',       precio:2.50,  unidad:'lb', icono:'🫘', badge:null,      activo:true, descripcion:'Garbanzos grandes y tiernos, perfectos para hummus y cocidos. Ricos en fibra y proteínas.', atributos:['Tamaño grande','Alto en fibra','Versátiles','Sin aditivos'] },
   { id:11, nombre:'Frijoles Negros',       categoria:'granos',       precio:2.00,  unidad:'lb', icono:'🫘', badge:null,      activo:true, descripcion:'Frijoles negros seleccionados. Ricos en antioxidantes, hierro y proteínas vegetales.', atributos:['Rico en antioxidantes','Alto en hierro','Cosecha fresca','Sin OGM'] },
   { id:12, nombre:'Maíz Mote',             categoria:'granos',       precio:2.00,  unidad:'lb', icono:'🌽', badge:null,      activo:true, descripcion:'Maíz mote pelado de primera calidad, tradicional de la gastronomía andina.', atributos:['Tradición andina','Pelado listo','Sabor auténtico','Sin conservantes'] },
   { id:13, nombre:'Semillas de Chía',      categoria:'semillas',     precio:6.00,  unidad:'lb', icono:'🌱', badge:'nuevo',   activo:true, descripcion:'Semillas de chía ricas en omega-3, fibra y proteínas. Perfectas para puddings y smoothies.', atributos:['Rico en omega-3','Alto en fibra','Sin gluten','Superalimento'] },
   { id:14, nombre:'Semillas de Sésamo',    categoria:'semillas',     precio:4.00,  unidad:'lb', icono:'🌾', badge:null,      activo:true, descripcion:'Semillas de sésamo tostadas, ideales para cocina asiática y panadería. Ricas en calcio.', atributos:['Alto en calcio','Tostadas','Versátiles','Sabor intenso'] },
   { id:15, nombre:'Semillas de Girasol',   categoria:'semillas',     precio:3.00,  unidad:'lb', icono:'🌻', badge:null,      activo:true, descripcion:'Semillas de girasol peladas y tostadas. Ricas en vitamina E y ácidos grasos insaturados.', atributos:['Alto en vit. E','Peladas','Snack energético','Sin sal añadida'] },
-  { id:16, nombre:'Pasas de Uva',          categoria:'deshidratados', precio:4.50,  unidad:'lb', icono:'🍇', badge:null,      activo:true, descripcion:'Pasas naturales sin azúcar añadida. Perfectas para repostería, cereales y snacks.', atributos:['Sin azúcar añadida','Naturalmente dulce','Sin conservantes','Deshidratado natural'] },
-  { id:17, nombre:'Orejones de Durazno',   categoria:'deshidratados', precio:6.00,  unidad:'lb', icono:'🍑', badge:null,      activo:true, descripcion:'Duraznos deshidratados sin conservantes, naturalmente dulces. Ricos en betacaroteno y potasio.', atributos:['Sin conservantes','Rico en potasio','Textura suave','Deshidratado artesanal'] },
-  { id:18, nombre:'Coco Rallado',          categoria:'deshidratados', precio:5.50,  unidad:'lb', icono:'🥥', badge:null,      activo:true, descripcion:'Coco rallado deshidratado sin azúcar añadida, perfecto para repostería y granolas.', atributos:['Sin azúcar','Deshidratado natural','Para repostería','Aroma natural'] },
+  { id:16, nombre:'Pasas de Uva',          categoria:'deshidratados', precio:4.50, unidad:'lb', icono:'🍇', badge:null,      activo:true, descripcion:'Pasas naturales sin azúcar añadida. Perfectas para repostería, cereales y snacks.', atributos:['Sin azúcar añadida','Naturalmente dulce','Sin conservantes','Deshidratado natural'] },
+  { id:17, nombre:'Orejones de Durazno',   categoria:'deshidratados', precio:6.00, unidad:'lb', icono:'🍑', badge:null,      activo:true, descripcion:'Duraznos deshidratados sin conservantes, naturalmente dulces. Ricos en betacaroteno y potasio.', atributos:['Sin conservantes','Rico en potasio','Textura suave','Deshidratado artesanal'] },
+  { id:18, nombre:'Coco Rallado',          categoria:'deshidratados', precio:5.50, unidad:'lb', icono:'🥥', badge:null,      activo:true, descripcion:'Coco rallado deshidratado sin azúcar añadida, perfecto para repostería y granolas.', atributos:['Sin azúcar','Deshidratado natural','Para repostería','Aroma natural'] },
 ];
 
 /* ============================================
-   DATA — CRUD localStorage
+   DATA — API-first, localStorage como fallback
    ============================================ */
-const DATA = {
-  KEYS: { productos: 'cbf_admin_productos', categorias: 'cbf_admin_categorias', nextId: 'cbf_admin_next_id' },
-
-  seed() {
-    if (!localStorage.getItem(this.KEYS.productos))  localStorage.setItem(this.KEYS.productos,  JSON.stringify(DEFAULT_PRODUCTOS));
-    if (!localStorage.getItem(this.KEYS.categorias)) localStorage.setItem(this.KEYS.categorias, JSON.stringify(DEFAULT_CATEGORIAS));
-    if (!localStorage.getItem(this.KEYS.nextId))     localStorage.setItem(this.KEYS.nextId, '19');
+const _LS = {
+  KEYS: {
+    productos:  'cbf_admin_productos',
+    categorias: 'cbf_admin_categorias',
+    nextId:     'cbf_admin_next_id',
   },
-
+  get(key)      { return JSON.parse(localStorage.getItem(this.KEYS[key]) || 'null'); },
+  set(key, val) { localStorage.setItem(this.KEYS[key], JSON.stringify(val)); },
   nextId() {
     const n = parseInt(localStorage.getItem(this.KEYS.nextId) || '19');
-    localStorage.setItem(this.KEYS.nextId, n + 1);
+    localStorage.setItem(this.KEYS.nextId, String(n + 1));
     return n;
+  },
+};
+
+const DATA = {
+  /* ---- Seed localStorage (solo en modo offline) ---- */
+  seed() {
+    if (_modoAPI) return;
+    if (!_LS.get('productos'))  _LS.set('productos',  DEFAULT_PRODUCTOS);
+    if (!_LS.get('categorias')) _LS.set('categorias', DEFAULT_CATEGORIAS);
+    if (!localStorage.getItem(_LS.KEYS.nextId)) localStorage.setItem(_LS.KEYS.nextId, '19');
+  },
+
+  /* ---- Categorías ---- */
+  async getCategorias() {
+    if (_modoAPI) return apiFetch('/categorias');
+    return _LS.get('categorias') || [];
+  },
+
+  async getCategoria(id) {
+    const lista = await this.getCategorias();
+    return lista.find(c => c.id === id) || null;
+  },
+
+  async addCategoria(datos) {
+    if (_modoAPI) {
+      return apiFetch('/categorias', { method: 'POST', body: JSON.stringify(datos) });
+    }
+    const lista = _LS.get('categorias') || [];
+    if (lista.find(x => x.id === datos.id)) return null; // ID duplicado
+    lista.push({ ...datos, creado: new Date().toISOString() });
+    _LS.set('categorias', lista);
+    return datos;
+  },
+
+  async updateCategoria(id, cambios) {
+    if (_modoAPI) {
+      return apiFetch(`/categorias/${id}`, { method: 'PUT', body: JSON.stringify(cambios) });
+    }
+    const lista = (_LS.get('categorias') || []).map(c => c.id === id ? { ...c, ...cambios, id } : c);
+    _LS.set('categorias', lista);
+  },
+
+  async deleteCategoria(id) {
+    if (_modoAPI) {
+      await apiFetch(`/categorias/${id}`, { method: 'DELETE' });
+      return true;
+    }
+    const productos = _LS.get('productos') || [];
+    if (productos.some(p => p.categoria === id)) return false;
+    _LS.set('categorias', (_LS.get('categorias') || []).filter(c => c.id !== id));
+    return true;
   },
 
   /* ---- Productos ---- */
-  getProductos()   { return JSON.parse(localStorage.getItem(this.KEYS.productos) || '[]'); },
-  saveProductos(a) { localStorage.setItem(this.KEYS.productos, JSON.stringify(a)); },
+  async getProductos() {
+    if (_modoAPI) return apiFetch('/productos');
+    return _LS.get('productos') || [];
+  },
 
-  addProducto(p) {
-    const lista = this.getProductos();
-    const nuevo = { ...p, id: this.nextId(), creado: new Date().toISOString() };
+  async getProducto(id) {
+    if (_modoAPI) return apiFetch(`/productos/${id}`);
+    return (_LS.get('productos') || []).find(p => p.id === id) || null;
+  },
+
+  async addProducto(datos) {
+    if (_modoAPI) {
+      // Mapear campo 'categoria' → 'categoria_id' para el API
+      const { categoria, ...resto } = datos;
+      return apiFetch('/productos', {
+        method: 'POST',
+        body: JSON.stringify({ ...resto, categoria_id: categoria }),
+      });
+    }
+    const lista = _LS.get('productos') || [];
+    const nuevo = { ...datos, id: _LS.nextId(), creado: new Date().toISOString() };
     lista.push(nuevo);
-    this.saveProductos(lista);
+    _LS.set('productos', lista);
     return nuevo;
   },
-  updateProducto(id, cambios) {
-    const lista = this.getProductos().map(p => p.id === id ? { ...p, ...cambios, id } : p);
-    this.saveProductos(lista);
-  },
-  deleteProducto(id) {
-    this.saveProductos(this.getProductos().filter(p => p.id !== id));
-  },
-  getProducto(id)  { return this.getProductos().find(p => p.id === id) || null; },
 
-  /* ---- Categorías ---- */
-  getCategorias()   { return JSON.parse(localStorage.getItem(this.KEYS.categorias) || '[]'); },
-  saveCategorias(a) { localStorage.setItem(this.KEYS.categorias, JSON.stringify(a)); },
+  async updateProducto(id, cambios) {
+    if (_modoAPI) {
+      const { categoria, ...resto } = cambios;
+      return apiFetch(`/productos/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ ...resto, categoria_id: categoria }),
+      });
+    }
+    _LS.set('productos', (_LS.get('productos') || []).map(p => p.id === id ? { ...p, ...cambios, id } : p));
+  },
 
-  addCategoria(c) {
-    const lista = this.getCategorias();
-    if (lista.find(x => x.id === c.id)) return null; // ID duplicado
-    lista.push({ ...c, creado: new Date().toISOString() });
-    this.saveCategorias(lista);
-    return c;
+  async deleteProducto(id) {
+    if (_modoAPI) {
+      return apiFetch(`/productos/${id}`, { method: 'DELETE' });
+    }
+    _LS.set('productos', (_LS.get('productos') || []).filter(p => p.id !== id));
   },
-  updateCategoria(id, cambios) {
-    const lista = this.getCategorias().map(c => c.id === id ? { ...c, ...cambios, id } : c);
-    this.saveCategorias(lista);
-  },
-  deleteCategoria(id) {
-    const productos = this.getProductos();
-    if (productos.some(p => p.categoria === id)) return false; // tiene productos
-    this.saveCategorias(this.getCategorias().filter(c => c.id !== id));
-    return true;
-  },
-  getCategoria(id) { return this.getCategorias().find(c => c.id === id) || null; },
 };
+
+/* ============================================
+   CACHE DE CATEGORÍAS (para _catLabel síncrono)
+   ============================================ */
+let _catsCache = [];
+
+function _catLabel(catId) {
+  const c = _catsCache.find(x => x.id === catId);
+  return c ? `${c.icono} ${c.nombre}` : (catId || '—');
+}
 
 /* ============================================
    UI — TOAST
@@ -146,7 +237,10 @@ function toast(msg, tipo = 'ok') {
   el.className = `toast${tipo === 'error' ? ' error' : tipo === 'warn' ? ' warn' : ''}`;
   el.textContent = msg;
   container.appendChild(el);
-  setTimeout(() => { el.style.animation = 'toastIn 0.28s ease reverse'; setTimeout(() => el.remove(), 260); }, 2600);
+  setTimeout(() => {
+    el.style.animation = 'toastIn 0.28s ease reverse';
+    setTimeout(() => el.remove(), 260);
+  }, 2800);
 }
 
 /* ============================================
@@ -154,7 +248,9 @@ function toast(msg, tipo = 'ok') {
    ============================================ */
 function abrirModal(id)  { document.getElementById(id)?.classList.add('visible'); }
 function cerrarModal(id) { document.getElementById(id)?.classList.remove('visible'); }
-function cerrarModales() { document.querySelectorAll('.modal-overlay, .confirm-overlay').forEach(m => m.classList.remove('visible')); }
+function cerrarModales() {
+  document.querySelectorAll('.modal-overlay, .confirm-overlay').forEach(m => m.classList.remove('visible'));
+}
 document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModales(); });
 
 /* ============================================
@@ -170,7 +266,8 @@ function confirmar(titulo, texto, cb) {
 function initConfirm() {
   document.getElementById('confirm-ok')?.addEventListener('click', () => {
     cerrarModal('confirm-overlay');
-    _confirmCb?.();
+    const result = _confirmCb?.();
+    if (result instanceof Promise) result.catch(err => toast(err.message || 'Error inesperado', 'error'));
   });
   document.getElementById('confirm-cancelar')?.addEventListener('click', () => cerrarModal('confirm-overlay'));
 }
@@ -179,7 +276,7 @@ function initConfirm() {
    UI — ATRIBUTOS DINÁMICOS
    ============================================ */
 function initAtributosUI(wrapId, inicial = []) {
-  const wrap  = document.getElementById(wrapId);
+  const wrap = document.getElementById(wrapId);
   if (!wrap) return;
   let lista = [...inicial];
 
@@ -194,7 +291,7 @@ function initAtributosUI(wrapId, inicial = []) {
     );
   }
 
-  const addBtn = wrap.querySelector('.atributos-add-btn');
+  const addBtn   = wrap.querySelector('.atributos-add-btn');
   const addInput = wrap.querySelector('.atributos-add input');
 
   function agregar() {
@@ -210,7 +307,7 @@ function initAtributosUI(wrapId, inicial = []) {
 
   render();
   wrap._getAtributos = () => [...lista];
-  wrap._setAtributos = (a) => { lista = [...a]; render(); };
+  wrap._setAtributos = a => { lista = [...a]; render(); };
 }
 
 /* ============================================
@@ -219,6 +316,7 @@ function initAtributosUI(wrapId, inicial = []) {
 function renderSidebar(activo) {
   const el = document.getElementById('sidebar');
   if (!el) return;
+
   el.innerHTML = `
     <div class="sidebar-logo">
       <img src="../Imágenes/LOGO.jpg" alt="Logo" class="sidebar-logo-img" onerror="this.style.display='none'">
@@ -233,20 +331,35 @@ function renderSidebar(activo) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section">Principal</div>
-      <a href="index.html" class="${activo==='dashboard'?'activo':''}"><span class="nav-icon">📊</span>Dashboard</a>
-      <a href="productos.html" class="${activo==='productos'?'activo':''}"><span class="nav-icon">🛒</span>Productos</a>
-      <a href="categorias.html" class="${activo==='categorias'?'activo':''}"><span class="nav-icon">🗂️</span>Categorías</a>
+      <a href="index.html"      class="${activo === 'dashboard'  ? 'activo' : ''}"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="productos.html"  class="${activo === 'productos'  ? 'activo' : ''}"><span class="nav-icon">🛒</span>Productos</a>
+      <a href="categorias.html" class="${activo === 'categorias' ? 'activo' : ''}"><span class="nav-icon">🗂️</span>Categorías</a>
       <div class="sidebar-section">Sitio</div>
       <a href="../index.html" target="_blank"><span class="nav-icon">🌐</span>Ver sitio</a>
     </nav>
+    <div class="sidebar-conexion" id="sidebar-conexion">
+      <span class="conexion-dot"></span>
+      <span id="conexion-label">Comprobando…</span>
+    </div>
     <div class="sidebar-footer">
       <a href="#" id="btn-logout"><span class="nav-icon">🚪</span>Cerrar sesión</a>
     </div>`;
 
+  // Actualizar indicador de conexión
+  const badge = document.getElementById('sidebar-conexion');
+  const label = document.getElementById('conexion-label');
+  if (_modoAPI) {
+    badge?.classList.add('online');
+    if (label) label.textContent = 'Conectado a BD';
+  } else {
+    badge?.classList.remove('online');
+    if (label) label.textContent = 'Modo offline';
+  }
+
   document.getElementById('btn-logout')?.addEventListener('click', e => { e.preventDefault(); AUTH.logout(); });
 
   // Toggle móvil
-  const toggle = document.getElementById('menu-toggle-admin');
+  const toggle  = document.getElementById('menu-toggle-admin');
   const overlay = document.getElementById('sidebar-overlay');
   toggle?.addEventListener('click', () => {
     el.classList.toggle('abierto');
@@ -261,13 +374,16 @@ function renderSidebar(activo) {
 /* ============================================
    PÁGINA: DASHBOARD
    ============================================ */
-function initDashboard() {
+async function initDashboard() {
   if (!document.getElementById('page-dashboard')) return;
 
-  const productos   = DATA.getProductos();
-  const categorias  = DATA.getCategorias();
-  const activos     = productos.filter(p => p.activo !== false);
-  const populares   = productos.filter(p => p.badge === 'popular').length;
+  const [productos, categorias] = await Promise.all([
+    DATA.getProductos(),
+    DATA.getCategorias(),
+  ]);
+
+  const activos   = productos.filter(p => p.activo !== false);
+  const populares = productos.filter(p => p.badge === 'popular').length;
 
   document.getElementById('stat-productos').textContent  = activos.length;
   document.getElementById('stat-categorias').textContent = categorias.filter(c => c.activo !== false).length;
@@ -277,12 +393,13 @@ function initDashboard() {
   const resumenEl = document.getElementById('resumen-categorias');
   if (resumenEl) {
     resumenEl.innerHTML = categorias.map(c => {
-      const cant = activos.filter(p => p.categoria === c.id).length;
+      // Compatibilidad API (categoria_id) y localStorage (categoria)
+      const cant = activos.filter(p => (p.categoria_id || p.categoria) === c.id).length;
       return `
         <tr>
           <td>${c.icono} ${c.nombre}</td>
           <td><strong>${cant}</strong></td>
-          <td>${cant > 0 ? Math.round(cant / activos.length * 100) : 0}%</td>
+          <td>${cant > 0 && activos.length > 0 ? Math.round(cant / activos.length * 100) : 0}%</td>
           <td><span class="badge badge-${c.activo !== false ? 'activo' : 'inactivo'}">${c.activo !== false ? '✓ Activa' : 'Inactiva'}</span></td>
         </tr>`;
     }).join('');
@@ -310,114 +427,139 @@ function initDashboard() {
    PÁGINA: PRODUCTOS
    ============================================ */
 let _productosEditId = null;
-let _renderProductos = null; // referencia al render de la página actual
+let _renderProductos = null;
 
 function initProductos() {
   if (!document.getElementById('page-productos')) return;
 
-  let busqueda = '';
-  let catFiltro = '';
-  let mostrarInactivos = false;
+  let busqueda       = '';
+  let catFiltro      = '';
+  let mostrarInact   = false;
 
-  function render() {
-    let lista = DATA.getProductos();
-    if (!mostrarInactivos) lista = lista.filter(p => p.activo !== false);
-    if (catFiltro)  lista = lista.filter(p => p.categoria === catFiltro);
-    if (busqueda) { const q = busqueda.toLowerCase(); lista = lista.filter(p => p.nombre.toLowerCase().includes(q) || p.descripcion?.toLowerCase().includes(q)); }
+  async function render() {
+    try {
+      // Cargar datos y actualizar cache de categorías
+      const [allProds, cats] = await Promise.all([DATA.getProductos(), DATA.getCategorias()]);
+      _catsCache = cats;
 
-    document.getElementById('productos-count').textContent = `${lista.length} producto${lista.length !== 1 ? 's' : ''}`;
+      // Filtrar
+      let lista = [...allProds];
+      if (!mostrarInact) lista = lista.filter(p => p.activo !== false);
+      if (catFiltro) lista = lista.filter(p => (p.categoria_id || p.categoria) === catFiltro);
+      if (busqueda) {
+        const q = busqueda.toLowerCase();
+        lista = lista.filter(p => p.nombre.toLowerCase().includes(q) || (p.descripcion || '').toLowerCase().includes(q));
+      }
 
-    const tbody = document.getElementById('productos-tbody');
-    if (!lista.length) {
-      tbody.innerHTML = `<tr><td colspan="7" class="tabla-vacia"><div class="tabla-vacia-icon">📦</div><p>No se encontraron productos</p></td></tr>`;
-      return;
+      document.getElementById('productos-count').textContent = `${lista.length} producto${lista.length !== 1 ? 's' : ''}`;
+
+      const tbody = document.getElementById('productos-tbody');
+      if (!lista.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="tabla-vacia">
+          <div class="tabla-vacia-icon">📦</div><p>No se encontraron productos</p></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = lista.map(p => {
+        const catId = p.categoria_id || p.categoria;
+        return `
+          <tr>
+            <td class="emoji-cell">${p.icono}</td>
+            <td>
+              <strong>${p.nombre}</strong><br>
+              <span class="text-muted" style="font-size:12px">${(p.descripcion || '').slice(0, 55)}…</span>
+            </td>
+            <td>${_catLabel(catId)}</td>
+            <td><strong>$${Number(p.precio).toFixed(2)}</strong> <span class="text-muted">/${p.unidad}</span></td>
+            <td>${p.badge ? `<span class="badge badge-${p.badge}">${p.badge}</span>` : '<span class="badge badge-sin">—</span>'}</td>
+            <td><span class="badge badge-${p.activo !== false ? 'activo' : 'inactivo'}">${p.activo !== false ? 'Activo' : 'Oculto'}</span></td>
+            <td>
+              <div class="d-flex gap-8">
+                <button class="btn btn-outline btn-sm btn-icon" title="Editar"   data-edit="${p.id}">✏️</button>
+                <button class="btn btn-danger  btn-sm btn-icon" title="Eliminar" data-del="${p.id}">🗑</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      tbody.querySelectorAll('[data-edit]').forEach(btn =>
+        btn.addEventListener('click', () => abrirModalProducto(parseInt(btn.dataset.edit)))
+      );
+      tbody.querySelectorAll('[data-del]').forEach(btn =>
+        btn.addEventListener('click', () => confirmarEliminarProducto(parseInt(btn.dataset.del)))
+      );
+    } catch (err) {
+      toast('Error al cargar productos: ' + err.message, 'error');
     }
-
-    tbody.innerHTML = lista.map(p => `
-      <tr>
-        <td class="emoji-cell">${p.icono}</td>
-        <td>
-          <strong>${p.nombre}</strong><br>
-          <span class="text-muted" style="font-size:12px">${p.descripcion?.slice(0,55)}…</span>
-        </td>
-        <td>${_catLabel(p.categoria)}</td>
-        <td><strong>$${Number(p.precio).toFixed(2)}</strong> <span class="text-muted">/${p.unidad}</span></td>
-        <td>${p.badge ? `<span class="badge badge-${p.badge}">${p.badge}</span>` : '<span class="badge badge-sin">—</span>'}</td>
-        <td><span class="badge badge-${p.activo !== false ? 'activo' : 'inactivo'}">${p.activo !== false ? 'Activo' : 'Oculto'}</span></td>
-        <td>
-          <div class="d-flex gap-8">
-            <button class="btn btn-outline btn-sm btn-icon" title="Editar" data-edit="${p.id}">✏️</button>
-            <button class="btn btn-danger btn-sm btn-icon"  title="Eliminar" data-del="${p.id}">🗑</button>
-          </div>
-        </td>
-      </tr>`).join('');
-
-    tbody.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => abrirModalProducto(parseInt(btn.dataset.edit))));
-    tbody.querySelectorAll('[data-del]').forEach(btn  => btn.addEventListener('click', () => confirmarEliminarProducto(parseInt(btn.dataset.del))));
   }
 
   // Poblar select de categorías en filtros
-  const selectCat = document.getElementById('filtro-cat');
-  DATA.getCategorias().forEach(c => {
-    const o = document.createElement('option');
-    o.value = c.id; o.textContent = `${c.icono} ${c.nombre}`;
-    selectCat?.appendChild(o);
-  });
+  (async () => {
+    const cats = await DATA.getCategorias();
+    _catsCache = cats;
+    const selectCat = document.getElementById('filtro-cat');
+    cats.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = `${c.icono} ${c.nombre}`;
+      selectCat?.appendChild(o);
+    });
+  })();
 
   document.getElementById('busqueda-productos')?.addEventListener('input', e => { busqueda = e.target.value; render(); });
-  selectCat?.addEventListener('change', e => { catFiltro = e.target.value; render(); });
-  document.getElementById('toggle-inactivos')?.addEventListener('change', e => { mostrarInactivos = e.target.checked; render(); });
-
+  document.getElementById('filtro-cat')?.addEventListener('change', e => { catFiltro = e.target.value; render(); });
+  document.getElementById('toggle-inactivos')?.addEventListener('change', e => { mostrarInact = e.target.checked; render(); });
   document.getElementById('btn-nuevo-producto')?.addEventListener('click', () => abrirModalProducto(null));
 
-  // Auto-abrir edición si viene de URL
+  // Auto-abrir edición desde URL
   const params = new URLSearchParams(window.location.search);
   if (params.get('editar')) abrirModalProducto(parseInt(params.get('editar')));
 
-  _renderProductos = render; // exponer para llamadas externas
+  _renderProductos = render;
   render();
 }
 
-function _catLabel(catId) {
-  const c = DATA.getCategorias().find(x => x.id === catId);
-  return c ? `${c.icono} ${c.nombre}` : catId;
-}
-
-function abrirModalProducto(id = null) {
+async function abrirModalProducto(id = null) {
   _productosEditId = id;
-  const es_nuevo = id === null;
-  document.getElementById('modal-producto-titulo').textContent = es_nuevo ? '➕ Nuevo Producto' : '✏️ Editar Producto';
+  const es_nuevo   = id === null;
+
+  document.getElementById('modal-producto-titulo').textContent  = es_nuevo ? '➕ Nuevo Producto' : '✏️ Editar Producto';
   document.getElementById('modal-producto-guardar').textContent = es_nuevo ? 'Crear producto' : 'Guardar cambios';
 
   const form = document.getElementById('form-producto');
   form.reset();
 
-  // Poblar select categorías
+  // Poblar select de categorías
   const selCat = document.getElementById('prod-categoria');
   selCat.innerHTML = '<option value="">Selecciona categoría…</option>';
-  DATA.getCategorias().filter(c => c.activo !== false).forEach(c => {
+  const cats = await DATA.getCategorias();
+  cats.filter(c => c.activo !== false).forEach(c => {
     const o = document.createElement('option');
     o.value = c.id; o.textContent = `${c.icono} ${c.nombre}`;
     selCat.appendChild(o);
   });
 
-  // Init atributos
+  // Inicializar atributos vacíos
   initAtributosUI('atributos-container', []);
 
-  // Cargar datos si es edición
   if (!es_nuevo) {
-    const p = DATA.getProducto(id);
-    if (!p) return;
-    form.elements['nombre'].value      = p.nombre;
-    form.elements['categoria'].value   = p.categoria;
-    form.elements['precio'].value      = p.precio;
-    form.elements['unidad'].value      = p.unidad;
-    form.elements['icono'].value       = p.icono;
-    form.elements['badge'].value       = p.badge || '';
-    form.elements['descripcion'].value = p.descripcion;
-    form.elements['activo'].checked    = p.activo !== false;
-    document.getElementById('emoji-preview').textContent = p.icono;
-    document.getElementById('atributos-container')._setAtributos(p.atributos || []);
+    try {
+      const p = await DATA.getProducto(id);
+      if (!p) { toast('Producto no encontrado', 'error'); return; }
+
+      form.elements['nombre'].value      = p.nombre;
+      form.elements['categoria'].value   = p.categoria_id || p.categoria;
+      form.elements['precio'].value      = p.precio;
+      form.elements['unidad'].value      = p.unidad;
+      form.elements['icono'].value       = p.icono;
+      form.elements['badge'].value       = p.badge || '';
+      form.elements['descripcion'].value = p.descripcion;
+      form.elements['activo'].checked    = p.activo !== false;
+      document.getElementById('emoji-preview').textContent = p.icono;
+      document.getElementById('atributos-container')._setAtributos(p.atributos || []);
+    } catch (err) {
+      toast('Error al cargar producto: ' + err.message, 'error');
+      return;
+    }
   } else {
     document.getElementById('emoji-preview').textContent = '📦';
   }
@@ -426,7 +568,7 @@ function abrirModalProducto(id = null) {
   form.elements['nombre']?.focus();
 }
 
-function guardarProducto(e) {
+async function guardarProducto(e) {
   e.preventDefault();
   const form = e.target;
   const atributosWrap = document.getElementById('atributos-container');
@@ -448,26 +590,44 @@ function guardarProducto(e) {
     return;
   }
 
-  if (_productosEditId === null) {
-    DATA.addProducto(datos);
-    toast(`✅ Producto "${datos.nombre}" creado`);
-  } else {
-    DATA.updateProducto(_productosEditId, datos);
-    toast(`✅ Producto "${datos.nombre}" actualizado`);
-  }
+  // Deshabilitar botón mientras guarda
+  const btnGuardar = document.getElementById('modal-producto-guardar');
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = 'Guardando…';
 
-  cerrarModal('modal-producto-overlay');
-  _renderProductos?.(); // Re-render sin re-inicializar
+  try {
+    if (_productosEditId === null) {
+      await DATA.addProducto(datos);
+      toast(`✅ Producto "${datos.nombre}" creado`);
+    } else {
+      await DATA.updateProducto(_productosEditId, datos);
+      toast(`✅ Producto "${datos.nombre}" actualizado`);
+    }
+    cerrarModal('modal-producto-overlay');
+    _renderProductos?.();
+  } catch (err) {
+    toast(err.message || 'Error al guardar', 'error');
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = _productosEditId === null ? 'Crear producto' : 'Guardar cambios';
+  }
 }
 
-function confirmarEliminarProducto(id) {
-  const p = DATA.getProducto(id);
+async function confirmarEliminarProducto(id) {
+  let p;
+  try {
+    p = await DATA.getProducto(id);
+  } catch (err) {
+    toast(err.message || 'Error al obtener producto', 'error');
+    return;
+  }
   if (!p) return;
+
   confirmar(
     'Eliminar producto',
     `¿Seguro que deseas eliminar "${p.nombre}"? Esta acción no se puede deshacer.`,
-    () => {
-      DATA.deleteProducto(id);
+    async () => {
+      await DATA.deleteProducto(id);
       toast(`🗑 "${p.nombre}" eliminado`);
       _renderProductos?.();
     }
@@ -477,45 +637,58 @@ function confirmarEliminarProducto(id) {
 /* ============================================
    PÁGINA: CATEGORÍAS
    ============================================ */
-let _catEditId = null;
+let _catEditId      = null;
 let _renderCategorias = null;
 
 function initCategorias() {
   if (!document.getElementById('page-categorias')) return;
 
-  function render() {
-    const productos  = DATA.getProductos();
-    const categorias = DATA.getCategorias();
+  async function render() {
+    try {
+      const [cats, prods] = await Promise.all([DATA.getCategorias(), DATA.getProductos()]);
 
-    document.getElementById('categorias-count').textContent = `${categorias.length} categoría${categorias.length !== 1 ? 's' : ''}`;
+      document.getElementById('categorias-count').textContent =
+        `${cats.length} categoría${cats.length !== 1 ? 's' : ''}`;
 
-    const tbody = document.getElementById('categorias-tbody');
-    if (!categorias.length) {
-      tbody.innerHTML = `<tr><td colspan="6" class="tabla-vacia"><div class="tabla-vacia-icon">🗂️</div><p>No hay categorías</p></td></tr>`;
-      return;
+      const tbody = document.getElementById('categorias-tbody');
+      if (!cats.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="tabla-vacia">
+          <div class="tabla-vacia-icon">🗂️</div><p>No hay categorías</p></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = cats.map(c => {
+        // cantidad_productos viene del API; en localStorage contamos manualmente
+        const cant = c.cantidad_productos !== undefined
+          ? Number(c.cantidad_productos)
+          : prods.filter(p => (p.categoria_id || p.categoria) === c.id).length;
+
+        return `
+          <tr>
+            <td class="emoji-cell">${c.icono}</td>
+            <td><strong>${c.nombre}</strong></td>
+            <td><code style="background:#f1f5f9;padding:2px 7px;border-radius:5px;font-size:12px">${c.id}</code></td>
+            <td class="truncate text-muted">${c.descripcion || '—'}</td>
+            <td><span class="badge badge-${cant > 0 ? 'activo' : 'sin'}">${cant} producto${cant !== 1 ? 's' : ''}</span></td>
+            <td><span class="badge badge-${c.activo !== false ? 'activo' : 'inactivo'}">${c.activo !== false ? 'Activa' : 'Inactiva'}</span></td>
+            <td>
+              <div class="d-flex gap-8">
+                <button class="btn btn-outline btn-sm btn-icon" title="Editar"   data-edit="${c.id}">✏️</button>
+                <button class="btn btn-danger  btn-sm btn-icon" title="Eliminar" data-del="${c.id}">🗑</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      tbody.querySelectorAll('[data-edit]').forEach(btn =>
+        btn.addEventListener('click', () => abrirModalCategoria(btn.dataset.edit))
+      );
+      tbody.querySelectorAll('[data-del]').forEach(btn =>
+        btn.addEventListener('click', () => confirmarEliminarCategoria(btn.dataset.del))
+      );
+    } catch (err) {
+      toast('Error al cargar categorías: ' + err.message, 'error');
     }
-
-    tbody.innerHTML = categorias.map(c => {
-      const cant = productos.filter(p => p.categoria === c.id && p.activo !== false).length;
-      return `
-        <tr>
-          <td class="emoji-cell">${c.icono}</td>
-          <td><strong>${c.nombre}</strong></td>
-          <td><code style="background:#f1f5f9;padding:2px 7px;border-radius:5px;font-size:12px">${c.id}</code></td>
-          <td class="truncate text-muted">${c.descripcion || '—'}</td>
-          <td><span class="badge badge-${cant > 0 ? 'activo' : 'sin'}">${cant} producto${cant !== 1 ? 's' : ''}</span></td>
-          <td><span class="badge badge-${c.activo !== false ? 'activo' : 'inactivo'}">${c.activo !== false ? 'Activa' : 'Inactiva'}</span></td>
-          <td>
-            <div class="d-flex gap-8">
-              <button class="btn btn-outline btn-sm btn-icon" title="Editar"   data-edit="${c.id}">✏️</button>
-              <button class="btn btn-danger  btn-sm btn-icon" title="Eliminar" data-del="${c.id}">🗑</button>
-            </div>
-          </td>
-        </tr>`;
-    }).join('');
-
-    tbody.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => abrirModalCategoria(btn.dataset.edit)));
-    tbody.querySelectorAll('[data-del]').forEach(btn  => btn.addEventListener('click', () => confirmarEliminarCategoria(btn.dataset.del)));
   }
 
   document.getElementById('btn-nueva-categoria')?.addEventListener('click', () => abrirModalCategoria(null));
@@ -523,32 +696,38 @@ function initCategorias() {
   render();
 }
 
-function abrirModalCategoria(id = null) {
-  _catEditId = id;
+async function abrirModalCategoria(id = null) {
+  _catEditId    = id;
   const es_nueva = id === null;
-  document.getElementById('modal-cat-titulo').textContent   = es_nueva ? '➕ Nueva Categoría' : '✏️ Editar Categoría';
-  document.getElementById('modal-cat-guardar').textContent  = es_nueva ? 'Crear categoría' : 'Guardar cambios';
-  document.getElementById('cat-id-grupo').style.display     = es_nueva ? 'block' : 'none';
+
+  document.getElementById('modal-cat-titulo').textContent  = es_nueva ? '➕ Nueva Categoría' : '✏️ Editar Categoría';
+  document.getElementById('modal-cat-guardar').textContent = es_nueva ? 'Crear categoría' : 'Guardar cambios';
+  document.getElementById('cat-id-grupo').style.display    = es_nueva ? 'block' : 'none';
 
   const form = document.getElementById('form-categoria');
   form.reset();
   document.getElementById('cat-emoji-preview').textContent = '📦';
 
   if (!es_nueva) {
-    const c = DATA.getCategoria(id);
-    if (!c) return;
-    form.elements['nombre'].value      = c.nombre;
-    form.elements['icono'].value       = c.icono;
-    form.elements['descripcion'].value = c.descripcion || '';
-    form.elements['activo'].checked    = c.activo !== false;
-    document.getElementById('cat-emoji-preview').textContent = c.icono;
+    try {
+      const c = await DATA.getCategoria(id);
+      if (!c) { toast('Categoría no encontrada', 'error'); return; }
+      form.elements['nombre'].value       = c.nombre;
+      form.elements['icono'].value        = c.icono;
+      form.elements['descripcion'].value  = c.descripcion || '';
+      form.elements['activo'].checked     = c.activo !== false;
+      document.getElementById('cat-emoji-preview').textContent = c.icono;
+    } catch (err) {
+      toast('Error al cargar categoría: ' + err.message, 'error');
+      return;
+    }
   }
 
   abrirModal('modal-categoria-overlay');
   form.elements['nombre']?.focus();
 }
 
-function guardarCategoria(e) {
+async function guardarCategoria(e) {
   e.preventDefault();
   const form = e.target;
 
@@ -561,37 +740,61 @@ function guardarCategoria(e) {
 
   if (!datos.nombre) { toast('El nombre es obligatorio', 'error'); return; }
 
-  if (_catEditId === null) {
-    // ID auto-generado desde el nombre
-    const idInput = form.elements['id']?.value.trim();
-    const autoId  = idInput || datos.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g,'');
-    const resultado = DATA.addCategoria({ ...datos, id: autoId });
-    if (!resultado) { toast(`El ID "${autoId}" ya existe`, 'error'); return; }
-    toast(`✅ Categoría "${datos.nombre}" creada`);
-  } else {
-    DATA.updateCategoria(_catEditId, datos);
-    toast(`✅ Categoría "${datos.nombre}" actualizada`);
-  }
+  const btnGuardar = document.getElementById('modal-cat-guardar');
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = 'Guardando…';
 
-  cerrarModal('modal-categoria-overlay');
-  _renderCategorias?.();
+  try {
+    if (_catEditId === null) {
+      const idInput = form.elements['id']?.value.trim();
+      const autoId  = idInput
+        || datos.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+      const resultado = await DATA.addCategoria({ ...datos, id: autoId });
+      if (!resultado) { toast(`El ID "${autoId}" ya existe`, 'error'); return; }
+      toast(`✅ Categoría "${datos.nombre}" creada`);
+    } else {
+      await DATA.updateCategoria(_catEditId, datos);
+      toast(`✅ Categoría "${datos.nombre}" actualizada`);
+    }
+    cerrarModal('modal-categoria-overlay');
+    _renderCategorias?.();
+  } catch (err) {
+    toast(err.message || 'Error al guardar', 'error');
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = _catEditId === null ? 'Crear categoría' : 'Guardar cambios';
+  }
 }
 
-function confirmarEliminarCategoria(id) {
-  const c = DATA.getCategoria(id);
+async function confirmarEliminarCategoria(id) {
+  let c, prods;
+  try {
+    [c, prods] = await Promise.all([DATA.getCategoria(id), DATA.getProductos()]);
+  } catch (err) {
+    toast(err.message || 'Error al obtener datos', 'error');
+    return;
+  }
   if (!c) return;
-  const cant = DATA.getProductos().filter(p => p.categoria === id).length;
+
+  const cant = prods.filter(p => (p.categoria_id || p.categoria) === id).length;
   if (cant > 0) {
     toast(`No se puede eliminar: tiene ${cant} producto${cant !== 1 ? 's' : ''} asociado${cant !== 1 ? 's' : ''}`, 'warn');
     return;
   }
+
   confirmar(
     'Eliminar categoría',
     `¿Seguro que deseas eliminar la categoría "${c.nombre}"? Esta acción no se puede deshacer.`,
-    () => {
-      if (DATA.deleteCategoria(id)) {
-        toast(`🗑 Categoría "${c.nombre}" eliminada`);
-        _renderCategorias?.();
+    async () => {
+      try {
+        const ok = await DATA.deleteCategoria(id);
+        if (ok !== false) {
+          toast(`🗑 Categoría "${c.nombre}" eliminada`);
+          _renderCategorias?.();
+        }
+      } catch (err) {
+        toast(err.message || 'Error al eliminar', 'error');
       }
     }
   );
@@ -602,8 +805,6 @@ function confirmarEliminarCategoria(id) {
    ============================================ */
 function initLogin() {
   if (!document.getElementById('login-form')) return;
-
-  // Redirigir si ya está logueado
   if (AUTH.logueado()) { window.location.href = 'index.html'; return; }
 
   document.getElementById('login-form').addEventListener('submit', e => {
@@ -625,7 +826,7 @@ function initLogin() {
 }
 
 /* ============================================
-   EMOJI PREVIEW en inputs
+   EMOJI PREVIEW
    ============================================ */
 function initEmojiPreview(inputId, previewId) {
   const input   = document.getElementById(inputId);
@@ -637,35 +838,42 @@ function initEmojiPreview(inputId, previewId) {
 /* ============================================
    INIT GENERAL
    ============================================ */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const pagina = window.location.pathname.split('/').pop().replace('.html', '');
 
   if (pagina === 'login') { initLogin(); return; }
 
-  // Todas las demás páginas requieren auth
   if (!AUTH.requerir()) return;
 
-  DATA.seed(); // Seed si es primera vez
+  // Verificar conexión con el backend
+  await checkAPI();
+
+  DATA.seed(); // seed localStorage (solo en modo offline)
 
   renderSidebar(pagina === 'index' ? 'dashboard' : pagina);
   initConfirm();
 
-  // Páginas
   switch (pagina) {
-    case 'index':      initDashboard(); break;
-    case 'productos':  initProductos();
+    case 'index':
+      await initDashboard();
+      break;
+
+    case 'productos':
+      initProductos();
       document.getElementById('form-producto')?.addEventListener('submit', guardarProducto);
       initEmojiPreview('prod-icono', 'emoji-preview');
-      document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => cerrarModales()));
+      document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', cerrarModales));
       break;
-    case 'categorias': initCategorias();
+
+    case 'categorias':
+      initCategorias();
       document.getElementById('form-categoria')?.addEventListener('submit', guardarCategoria);
       initEmojiPreview('cat-icono', 'cat-emoji-preview');
-      document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => cerrarModales()));
+      document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', cerrarModales));
       break;
   }
 
-  // Cerrar modal al click fuera
+  // Cerrar modal al hacer clic fuera
   document.querySelectorAll('.modal-overlay').forEach(overlay =>
     overlay.addEventListener('click', e => { if (e.target === overlay) cerrarModales(); })
   );
